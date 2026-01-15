@@ -38,3 +38,53 @@ gcc -o program main.c -L. -lmath
 gcc -o program main.c libmath.a
 
 ```
+
+------------------------------------------------------------------------
+
+### Shared Libs
+
+1. The main differentiator is that we generate our objfiles with: `-fPIC` eg:
+
+```bash
+gcc -fPIC -c add.c multiply.c
+
+```
+*-fPIC* : Position-Independent Code (PIC), This is intrinsic to the fact that the linker can dynamically call externally defined library code.
+This is important given that since each program has a different memory layout.
+
+
+2. Create the shared lib in the following manner:
+
+```bash
+gcc -shared -o {LIB_NAME} {SRC_FILES}
+
+```
+for instance:
+
+``` bash
+
+gcc -shared -o libmath.dylib add.o multiply.o
+
+```
+note that I'm using `.dylib` as an extension since that's the library file extension in macos, **for linux:** use `.so`
+
+
+3. Compile src files with directive to look for libs: 
+
+```bash
+gcc -o program main.c -L. -lmath
+
+```
+
+4. Include the current directory so the runtime linker can find the shared library:
+
+```bash
+export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+
+```
+(For some reason I was able to run the program before doing the above mentioned export, might need to look into that further.)
+
+
+
+
+
