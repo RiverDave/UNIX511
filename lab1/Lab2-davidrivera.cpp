@@ -1,16 +1,113 @@
 #include "pidUtil.h"
 #include "stdio.h"
 #include <vector>
+#include <string>
 #include <cassert>
+#include <optional>
+#include <limits.h>
 
-using namespace std;
+
+
+
+/*
+ * err = foo();
+ * if(err != 0)
+ *  cout << err.to_string() << endl;
+
+ */
+
+
+
+
+
+
+
+
+void print_pids(std::vector<int>& pids){
+
+	for(auto &pid : pids)
+		std::cout <<  pid << "\n";
+}
 
 int main(void) {
 
-  vector<int> pidList;
-  GetAllPids(pidList);
+  using namespace std;
 
-  assert(!pidList.empty());
+  vector<int> pidList;
+
+  {
+
+  // 1.
+  std::cout << "====== 1. Getting and printin' all PIDS ======\n";
+  ErrStatus err = GetAllPids(pidList);
+  if(err) cout << GetErrorMsg(err) << "\n";
+  else{
+  	assert(!pidList.empty());
+  	print_pids(pidList);
+  }
+
+
+
+
+  }
+
+
+
+  {
+
+  // 2.
+  std::cout << "====== 2. Printing name of PID 1 ======\n";
+  const int pid_one= 1;
+  std::string pid_name;
+  ErrStatus err = GetNameByPid(pid_one, pid_name);
+  if(err) cout << GetErrorMsg(err) << "\n";
+  else{
+  	assert(!pid_name.empty());
+  	std::cout << pid_name << std::endl;
+  }
+
+
+
+  }
+
+
+
+  {
+  // 3.
+  const std::string name = "Lab2";
+  std::cout << "====== 3. Printing PID with name: " << name <<  " ======\n";
+  int pid_id = INT_MAX; // we use max as placeholder here
+  ErrStatus err = GetPidByName(name, pid_id);
+  if(err) cout << GetErrorMsg(err) << "\n";
+  else{
+
+  	assert(pid_id != INT_MAX);
+  	std::cout << pid_id << endl;
+
+  }
+
+
+  }
+
+
+
+
+  {
+  // 4.
+  const std::string name = "Lab11";
+  std::cout << "====== 4. Printing PID with name: " << name <<  " ======\n";
+  int pid_id = INT_MAX; // we use max as placeholder here
+  ErrStatus err = GetPidByName(name, pid_id);
+  if(err) cout << "ERR: " <<  GetErrorMsg(err) << "\n";
+  else{
+
+  	assert(pid_id != INT_MAX);
+  	std::cout << pid_id << endl;
+
+  }
+  }
+
+
 
 
   return 0;
