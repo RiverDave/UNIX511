@@ -1,3 +1,16 @@
+/******************************************************************************
+* UNX511-Lab1
+* I declare that this lab is my own work in accordance with Seneca Academic Policy.
+* No part of this assignment has been copied manually or electronically from any other source
+* (including web sites) or distributed to other students.
+*
+* Name: David Rivera Student ID: 137648226 Date: 17/01/25
+*
+*
+******************************************************************************/
+
+
+
 #include "pidUtil.h"
 #include "stdio.h"
 #include <vector>
@@ -7,23 +20,7 @@
 #include <limits.h>
 
 
-
-
-/*
- * err = foo();
- * if(err != 0)
- *  cout << err.to_string() << endl;
-
- */
-
-
-
-
-
-
-
-
-void print_pids(std::vector<int>& pids){
+void print_pids(const std::vector<int>& pids){
 
 	for(auto &pid : pids)
 		std::cout <<  pid << "\n";
