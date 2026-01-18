@@ -1,5 +1,6 @@
 
 1. please explain every line of this Makefile:
+
 ``make
     CC=g++ # The actual C compiler to utilize.
     CFLAGS=-I # Specifies additional Include dirs
@@ -20,7 +21,7 @@
     all: pidUtil lib # Rule to compile all targets
 ```
 
-2.
+2. My answers to the declarations:
 
     - D1: How much did you use generative AI to complete this
     assignment? 
@@ -29,4 +30,4 @@
      - D2: How confident are you in your understanding of the
     generative AI support you utilized in this assignment, and in your ability to explain it if
     questioned?
-        *Answer*: 5. Very confident as the reason I used it in the first place was merely to understand certain cli flags on top of gcc and the nature of its errors. Therefore  I'm very confident on explaining them.
+        *Answer*: 5. Very confident as the reason I used it in the first place was merely to understand certain cli flags on top of gcc and the nature of its errors Therefore, I'm very confident on explaining them.

@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 
+// NOTE: To link this with LibPidUtil.a it is required to compile it on x86. The machine code I inspected seems to be compiled for that target.
 
 #include "pidUtil.h"
 #include "stdio.h"
