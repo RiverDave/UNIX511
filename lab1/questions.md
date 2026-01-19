@@ -1,4 +1,7 @@
 
+### Lab 1 - David Rivera
+
+
 1. please explain every line of this Makefile:
 
 ``make
@@ -31,3 +34,8 @@
     generative AI support you utilized in this assignment, and in your ability to explain it if
     questioned?
         *Answer*: 5. Very confident as the reason I used it in the first place was merely to understand certain cli flags on top of gcc and the nature of its errors Therefore, I'm very confident on explaining them.
+
+
+-----
+
+**Walkthrough VIDEO LINK**: https://youtu.be/a1QbMrYX4G8
