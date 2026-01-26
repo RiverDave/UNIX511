@@ -1,0 +1,299 @@
+PID   S   VmSize(kB)   VmRSS(kB)   Name
+    1 S       35616        21328   systemd
+    2 S           0            0   kthreadd
+    3 S           0            0   pool_workqueue_release
+    4 I           0            0   kworker/R-rcu_gp
+    5 I           0            0   kworker/R-sync_wq
+    6 I           0            0   kworker/R-kvfree_rcu_reclaim
+    7 I           0            0   kworker/R-slub_flushwq
+    8 I           0            0   kworker/R-netns
+   10 I           0            0   kworker/0:0H-events_highpri
+   13 I           0            0   kworker/R-mm_percpu_wq
+   15 S           0            0   ksoftirqd/0
+   16 I           0            0   rcu_preempt
+   17 S           0            0   rcu_exp_par_gp_kthread_worker/0
+   18 S           0            0   rcu_exp_gp_kthread_worker
+   19 S           0            0   migration/0
+   20 S           0            0   cpuhp/0
+   21 S           0            0   cpuhp/1
+   22 S           0            0   migration/1
+   23 S           0            0   ksoftirqd/1
+   25 I           0            0   kworker/1:0H-events_highpri
+   26 S           0            0   cpuhp/2
+   27 S           0            0   migration/2
+   28 S           0            0   ksoftirqd/2
+   30 I           0            0   kworker/2:0H-events_highpri
+   31 S           0            0   cpuhp/3
+   32 S           0            0   migration/3
+   33 S           0            0   ksoftirqd/3
+   35 I           0            0   kworker/3:0H-events_highpri
+   36 S           0            0   cpuhp/4
+   37 S           0            0   migration/4
+   38 S           0            0   ksoftirqd/4
+   40 I           0            0   kworker/4:0H-events_highpri
+   41 S           0            0   kdevtmpfs
+   42 I           0            0   kworker/R-inet_frag_wq
+   43 I           0            0   rcu_tasks_kthread
+   44 I           0            0   rcu_tasks_rude_kthread
+   45 I           0            0   rcu_tasks_trace_kthread
+   46 S           0            0   kauditd
+   47 S           0            0   oom_reaper
+   48 I           0            0   kworker/R-writeback
+   49 S           0            0   kcompactd0
+   50 S           0            0   ksmd
+   51 S           0            0   khugepaged
+   52 I           0            0   kworker/R-kblockd
+   53 I           0            0   kworker/R-blkcg_punt_bio
+   54 I           0            0   kworker/R-kintegrityd
+   55 S           0            0   pr/ttyAMA-1
+   56 I           0            0   kworker/R-tpm_dev_wq
+   57 I           0            0   kworker/R-ata_sff
+   58 I           0            0   kworker/R-md
+   59 I           0            0   kworker/R-md_bitmap
+   60 I           0            0   kworker/R-edac-poller
+   61 I           0            0   kworker/R-devfreq_wq
+   62 S           0            0   watchdogd
+   63 I           0            0   kworker/0:1H-kblockd
+   65 S           0            0   kswapd0
+   66 I           0            0   kworker/R-cryptd
+   70 I           0            0   kworker/R-kthrotld
+   72 S           0            0   irq/49-ACPI:Ged
+   73 I           0            0   kworker/R-acpi_thermal_pm
+   75 S           0            0   hwrng
+   76 I           0            0   kworker/R-dm_bufio_cache
+   77 I           0            0   kworker/R-mld
+   78 I           0            0   kworker/1:1H-kblockd
+   79 I           0            0   kworker/R-ipv6_addrconf
+   81 I           0            0   kworker/R-kstrp
+   93 I           0            0   kworker/u21:0
+  163 I           0            0   kworker/4:1H-kblockd
+  167 I           0            0   kworker/2:1H-kblockd
+  171 I           0            0   kworker/3:1H-kblockd
+  385 S           0            0   scsi_eh_0
+  386 I           0            0   kworker/R-scsi_tmf_0
+  387 S           0            0   usb-storage
+  389 I           0            0   kworker/R-uas
+  399 I           0            0   kworker/R-btrfs-worker
+  400 I           0            0   kworker/R-btrfs-delalloc
+  401 I           0            0   kworker/R-btrfs-flush_delalloc
+  402 I           0            0   kworker/R-btrfs-cache
+  403 I           0            0   kworker/R-btrfs-fixup
+  404 I           0            0   kworker/R-btrfs-endio
+  405 I           0            0   kworker/R-btrfs-endio-meta
+  406 I           0            0   kworker/R-btrfs-rmw
+  407 I           0            0   kworker/R-btrfs-endio-write
+  408 I           0            0   kworker/R-btrfs-compressed-write
+  409 I           0            0   kworker/R-btrfs-freespace-write
+  410 I           0            0   kworker/R-btrfs-delayed-meta
+  411 I           0            0   kworker/R-btrfs-qgroup-rescan
+  412 S           0            0   btrfs-cleaner
+  413 S           0            0   btrfs-transaction
+  657 S           0            0   jbd2/vda2-8
+  658 I           0            0   kworker/R-ext4-rsv-conversion
+  718 S       12980         5976   dbus-broker-lau
+  720 S       13024         8416   dbus-broker
+  723 S        6732         3796   avahi-daemon
+  726 S       81196         3664   irqbalance
+  729 S      613080        12488   polkitd
+  731 S       21608         2856   rtkit-daemon
+  735 S      532592         6600   switcheroo-cont
+  750 S      535240         7368   accounts-daemon
+  763 S       21236        12760   systemd-logind
+  782 S        6732         1656   avahi-daemon
+  811 S      398624        11768   ModemManager
+  857 I           0            0   kworker/R-rpciod
+  858 I           0            0   kworker/R-xprtiod
+  881 S      562252        20120   NetworkManager
+  890 S      283104         6780   gssproxy
+  891 S      503784        27492   tuned
+ 1088 S      181148        14148   rsyslogd
+ 1114 S        4872         2576   atd
+ 1215 S      307008         6536   uresourced
+ 1320 S      502492        25256   tuned-ppd
+ 1451 S      579264        20796   lvmdbusd
+ 1460 S      245412        11104   python3
+ 1883 S      386600        18680   sddm
+ 1884 S      232424         2400   agetty
+ 2020 S      312856        18668   sddm-helper
+ 2027 S      251828        15316   systemd
+ 2029 S       18580         2720   (sd-pam)
+ 2049 S        9104         3756   dbus-broker-lau
+ 2052 S        9692         5164   dbus-broker
+ 2054 S      872208        39712   ksecretd
+ 2061 S      534532        28408   startplasma-way
+ 2308 S      384188        13412   kwin_wayland_wr
+ 2309 S      457168         8048   uresourced
+ 2315 S      337220        13340   pipewire
+ 2318 S      880152        18872   wireplumber
+ 2324 S     1567148        99652   kwin_wayland
+ 2326 S      345868        17784   pipewire-pulse
+ 2327 S   268902932        18700   baloo_file
+ 2349 S     1391016        14524   xdg-desktop-por
+ 2362 S      531896         5800   xdg-permission-
+ 2372 S      757244         6360   xdg-document-po
+ 2379 S        2340         1732   fusermount3
+ 2404 S     1484144        47724   maliit-keyboard
+ 2414 S      307972        19296   Xwayland
+ 2435 S      382036         6896   at-spi-bus-laun
+ 2447 S        8972         3492   dbus-broker-lau
+ 2450 S        4860         2384   dbus-broker
+ 2464 S      795396        39064   ksmserver
+ 2466 S     1792712        58912   kded6
+ 2487 S     2748924       289896   plasmashell
+ 2490 S      169940         6432   at-spi2-registr
+ 2526 S      164872         5484   dconf-service
+ 2533 S      880492        24708   kactivitymanage
+ 2536 S      463772        17904   gmenudbusmenupr
+ 2539 S      795312        37720   kaccess
+ 2546 S     1023624        37924   polkit-kde-auth
+ 2547 S      917472        37292   org_kde_powerde
+ 2549 S      868824        38520   xdg-desktop-por
+ 2550 S      463516        17508   xembedsniproxy
+ 2551 S        7672         4884   ssh-agent
+ 2719 S      518308        16752   abrt-applet
+ 2725 S      874044        45576   kdeconnectd
+ 2741 S      949768        45216   xwaylandvideobr
+ 2742 S      757748        33808   seapplet
+ 2756 S      401276        19660   kunifiedpush-di
+ 2758 S      320856         9316   spice-vdagent
+ 2765 S      721748        24556   xdg-desktop-por
+ 2771 S      551444         7408   agent
+ 2784 S       93700         6076   spice-vdagentd
+ 2794 S     1386820       217816   DiscoverNotifie
+ 2795 S     1386148        71492   kalendarac
+ 2848 S        7616         4008   xsettingsd
+ 2849 S       47976         7124   obexd
+ 2909 S      406188         8444   imsettings-daem
+ 3009 S     1024256        41072   akonadi_control
+ 3015 S     2658376        33604   akonadiserver
+ 3057 I           0            0   kworker/R-dio/vda3
+ 3085 S     2779436        76684   mysqld
+ 3133 S     1391104        71868   akonadi_archive
+ 3134 S      951840        42244   akonadi_followu
+ 3135 S      951436        41948   akonadi_migrati
+ 3136 S     1313776        69708   akonadi_sendlat
+ 3137 S      967160        45852   akonadi_newmail
+ 3138 S     1391292        71916   akonadi_mailfil
+ 3139 S      950656        42004   akonadi_maildis
+ 3140 S     1317240        70600   akonadi_unified
+ 3143 S      524008        28468   akonadi_indexin
+ 3144 S      964916        45812   akonadi_mailmer
+ 3209 S      516404        26472   akonadi_maildir
+ 3213 S      501524        23952   akonadi_birthda
+ 3238 S      499572        23572   akonadi_contact
+ 3243 S      503508        27224   akonadi_ical_re
+ 3268 S     6149368       725044   firefox
+ 3363 S      647436        41456   Socket
+ 3402 S      313372        22436   forkserver
+ 3424 S     4332456       102160   WebExtensions
+ 3433 S     1120108        50176   RDD
+ 3478 S     4773464       195880   Privileged
+ 3577 S     4310620       137404   Isolated
+ 3686 S      946496        39048   Utility
+ 3718 S     5621704       583624   Isolated
+ 3843 S     4224872       184516   Isolated
+ 3874 S     4130900       112808   Isolated
+ 3959 S     4980548       351544   Isolated
+ 4269 S     4128348       106576   Isolated
+ 4355 S     4194112        94204   Isolated
+ 4423 S     4126836       101988   Isolated
+ 4456 S      330148         8600   sd_espeak-ng
+ 4495 S      330208         8596   sd_espeak-ng
+ 4499 S      160464         3608   sd_dummy
+ 4502 S      340800         6336   speech-dispatch
+ 4628 S     1260832        66852   konsole
+ 4640 S      233128         5084   bash
+ 5065 R     1253492        29984   tailscaled
+ 5293 S     4343156       224072   Isolated
+ 6317 S    12928860       207340   Isolated
+ 6349 S     4413828       230660   Isolated
+ 7318 S       19536         8648   sshd-session
+ 7325 S       19796         6172   sshd-session
+ 7326 S      233096         5088   bash
+ 7399 S      237832         7540   tmux:
+ 7400 S      233128         5120   bash
+ 7484 S      234396         3648   tmux:
+ 7485 S      233644         5740   bash
+ 8597 S      233372         5364   bash
+12316 S      231864         3212   sh
+12320 S    11632956       124716   node
+12368 S     1181884        86036   node
+12949 S      233256         4856   bash
+13292 S      233412         4948   bash
+14952 S     1294364        67980   lldb
+14964 S      209344        32312   lldb-server
+14973 t        2348          976   lab2
+18659 S      233948         5976   bash
+21400 S     1714676       184576   kscreenlocker_g
+21739 I           0            0   kworker/u20:5-btrfs-endio-write
+22574 I           0            0   kworker/u20:1-btrfs-endio
+23101 S       19608         8644   sshd-session
+23107 S       23596         9896   sshd-session
+23108 S      231996         3732   bash
+23139 S      232260         3720   sh
+23157 S       37460        16696   code-94e8ae2b28
+23182 S    75962696       456872   node
+23193 S      997172        53476   node
+23236 S     1413404       137456   clangd.main
+23675 I           0            0   kworker/3:1-events
+26195 S      240476         9772   vim
+26535 I           0            0   kworker/u20:2-btrfs-endio
+26546 S      233128         4752   bash
+26671 I           0            0   kworker/u20:12-btrfs-endio-write
+26674 I           0            0   kworker/u20:15-writeback
+26884 S      232748         2988   crond
+30743 S      553196         7356   pcscd
+31726 S      555044        12788   abrtd
+31733 S      283808        13848   abrt-dump-journ
+41887 S      283816        12940   abrt-dump-journ
+42617 S      283808        12396   abrt-dump-journ
+42636 S      253476        10036   cupsd
+42637 S       21956         7308   dbus
+42670 S        7924         5896   sshd
+42962 S       16304         6064   systemd-userdbd
+42965 S       15780         4180   qemu-ga
+42978 S        4320         2676   alsactl
+42979 S       86800         5708   chronyd
+42983 S       58820        24036   systemd-journal
+42984 S       23992        15184   systemd-resolve
+42985 S       38328        12108   systemd-udevd
+42986 S      480996        12900   udisksd
+42988 S      542508         9664   upowerd
+43003 S      376444        50020   firewalld
+43027 S           0            0   psimon
+43240 S           0            0   psimon
+43323 S       28980         2820   auditd
+43325 S        6740         2616   sedispatch
+43477 S      803552        75672   gdb
+43485 t        2832         1368   lab2
+44230 I           0            0   kworker/2:1-mm_percpu_wq
+44286 I           0            0   kworker/0:2-events
+44342 I           0            0   kworker/4:1-events
+44647 S     3653372        81088   Web
+44670 I           0            0   kworker/1:2-events
+44685 I           0            0   kworker/u20:0-flush-btrfs-1
+44744 I           0            0   kworker/3:2-events
+44780 I           0            0   kworker/2:0-events
+44789 S     3653372        81088   Web
+44824 I           0            0   kworker/1:0-events
+44930 I           0            0   kworker/0:0-events
+44936 I           0            0   kworker/4:2-events
+44964 I           0            0   kworker/3:0-events
+44981 S     3653372        81088   Web
+45024 I           0            0   kworker/u20:3-events_unbound
+45025 I           0            0   kworker/u20:4
+45026 I           0            0   kworker/1:1-events
+45029 I           0            0   kworker/2:2-mm_percpu_wq
+45055 S       16828         6072   systemd-userwor
+45056 S       16828         6068   systemd-userwor
+45057 S       16828         6056   systemd-userwor
+45060 I           0            0   kworker/0:1-events
+45063 S      230112         1948   sleep
+45209 R        2352         1388   lab2
+
+Top 5 by VmRSS
+firefox (3268) -> 725044 kB
+Isolated (3718) -> 583624 kB
+node (23182) -> 456872 kB
+Isolated (3959) -> 351544 kB
+plasmashell (2487) -> 289896 kB
