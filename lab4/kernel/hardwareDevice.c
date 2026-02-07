@@ -2,6 +2,7 @@
 //
 // 29-Dec-20  M. Watler:        Created.
 
+
 #include <linux/cdev.h>     /* char device stuff */
 #include <linux/delay.h>     /* msleep */
 #include <linux/errno.h>    /* error codes */
@@ -13,6 +14,7 @@
 #include <linux/uaccess.h>
 #include "hardwareDevice.h"
 
+
 MODULE_DESCRIPTION("Hardware Device Linux driver");
 MODULE_LICENSE("GPL");
 
@@ -20,7 +22,8 @@ MODULE_LICENSE("GPL");
 
 int register_device(void);
 void unregister_device(void);
-//TODO: Function prototypes for the read and ioctl functions
+static ssize_t hardware_device_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+static ssize_t hardware_device_read(struct file *filp, char __user *buf, size_t len, loff_t *off);
 static int hardware_device_open(struct inode *inode, struct file *file);
 static int hardware_device_close(struct inode *inode, struct file *file);
 
@@ -49,7 +52,8 @@ module_exit(hardware_device_exit);
 static struct file_operations simple_driver_fops =
 {
     .owner = THIS_MODULE,
-    //TODO: Function pointers for the read and ioctl functions
+    .unlocked_ioctl = hardware_device_ioctl,
+    .read =  hardware_device_read,
     .open = hardware_device_open,
     .release = hardware_device_close,
 };
@@ -65,7 +69,7 @@ static bool is_halt;
 int hardwareSim(void *data)
 {
     int i;
-    printk(KERN_INFO "hardwareSim:\n");
+    printk(KERN_INFO "hardwareSim yo:\n");
     for(i=0; i<BUF_LEN-1; ++i) {
         buffer[i]='a';
     }
@@ -81,6 +85,7 @@ int hardwareSim(void *data)
         }
         msleep(1000);
     }
+
     return 0;
 }
 
@@ -141,11 +146,14 @@ static int hardware_device_close(struct inode *inode, struct file *file)
 /*===============================================================================================*/
 static ssize_t hardware_device_read(struct file *filp, char __user *buf, size_t len, loff_t *off)
 {
-    //TODO: Implement the read function
+    int bytes_read = BUF_LEN - copy_to_user(buf, buffer, len);
+    printk(KERN_INFO "simple_char_dev: Read %d bytes\n", bytes_read);
+    return bytes_read;
 }
 
 /*===============================================================================================*/
 static long hardware_device_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
     //TODO: Implement the ioctl function
+    return 0;
 }

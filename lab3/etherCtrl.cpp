@@ -27,8 +27,7 @@ int main()
 
 
     cout << "Enter the interface name: ";
-    // cin >> if_name;
-    memcpy(if_name, "enp0s1\0",6);
+    cin >> if_name;
 
     size_t if_name_len=(strlen(if_name) + 1);
     if (if_name_len < sizeof(ifr.ifr_name)) {
