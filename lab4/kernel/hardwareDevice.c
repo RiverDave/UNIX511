@@ -69,7 +69,7 @@ static bool is_halt;
 int hardwareSim(void *data)
 {
     int i;
-    printk(KERN_INFO "hardwareSim yo:\n");
+    printk(KERN_INFO "hardwareSim:\n");
     for(i=0; i<BUF_LEN-1; ++i) {
         buffer[i]='a';
     }
@@ -85,7 +85,7 @@ int hardwareSim(void *data)
         }
         msleep(1000);
     }
-
+    printk(KERN_INFO "LA FINISH hardwareSim:\n");
     return 0;
 }
 
@@ -154,6 +154,29 @@ static ssize_t hardware_device_read(struct file *filp, char __user *buf, size_t 
 /*===============================================================================================*/
 static long hardware_device_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
-    //TODO: Implement the ioctl function
-    return 0;
+    long ret;
+    switch(cmd){
+        case HARDWARE_DEVICE_RESUME: {
+            printk(KERN_INFO "handling resume \n");
+            // respawn our process
+            is_running=true;
+            is_halt=false;
+            printk(KERN_INFO "Hardware-Device: kthread_create(hardwareSim)\n");
+            threadPtr = kthread_create(hardwareSim, NULL, "HardwareSimulator");
+            if(threadPtr) {
+                wake_up_process(threadPtr);
+            }
+            ret = 0;
+        } break;
+        case HARDWARE_DEVICE_HALT: {
+            printk(KERN_INFO "handling halt \n");
+            is_halt = true;
+            is_running = false;
+            ret = 0;
+        } break;
+        default:
+            printk(KERN_INFO "Unknown ioctl cmd \n");
+            ret = -1;
+    }
+    return ret;
 }

@@ -26,25 +26,25 @@ int main()
         rc=-1;
     }
     if(rc==0) {
-        for(int i=0; i<10; ++i) {
+        for(int i=0; i<3; ++i) {
             nbytes=read(fd, buf, BUF_LEN);
             printf("nbytes:%d = read() buf:%s\n", nbytes, buf);
             sleep(3);
         }
-        // printf("HARDWARE_DEVICE_HALT...\n");
-        // ioctl(fd, HARDWARE_DEVICE_HALT, NULL);
-        // for(int i=0; i<3; ++i) {
-        //     nbytes=read(fd, buf, BUF_LEN);
-        //     printf("nbytes:%d = read() buf:%s\n", nbytes, buf);
-        //     sleep(3);
-        // }
-        // printf("HARDWARE_DEVICE_RESUME...\n");
-        // ioctl(fd, HARDWARE_DEVICE_RESUME, NULL);
-        // for(int i=0; i<3; ++i) {
-        //     nbytes=read(fd, buf, BUF_LEN);
-        //     printf("nbytes:%d = read() buf:%s\n", nbytes, buf);
-        //     sleep(3);
-        // }
+        printf("HARDWARE_DEVICE_HALT...\n");
+        ioctl(fd, HARDWARE_DEVICE_HALT, NULL);
+        for(int i=0; i<3; ++i) {
+            nbytes=read(fd, buf, BUF_LEN);
+            printf("nbytes:%d = read() buf:%s\n", nbytes, buf);
+            sleep(3);
+        }
+        printf("HARDWARE_DEVICE_RESUME...\n");
+        ioctl(fd, HARDWARE_DEVICE_RESUME, NULL);
+        for(int i=0; i<3; ++i) {
+            nbytes=read(fd, buf, BUF_LEN);
+            printf("nbytes:%d = read() buf:%s\n", nbytes, buf);
+            sleep(3);
+        }
     }
 
     close(fd);
