@@ -85,7 +85,6 @@ int hardwareSim(void *data)
         }
         msleep(1000);
     }
-    printk(KERN_INFO "LA FINISH hardwareSim:\n");
     return 0;
 }
 
