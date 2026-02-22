@@ -19,7 +19,7 @@ bool isParent = true;//Distinguishes between the parent
                      //process and the child process(es)
 pid_t childPid[NUM];
 
-char *intf[]={"lo", "enp0s33"};
+char *intf[]={"lo", "enp0s25"};
 
 int main()
 {
@@ -49,7 +49,7 @@ int systemMonitor()//run by the parent process
     int status=-1;
     pid_t pid=0;
     for(int i=0; i<NUM; ++i) {
-        kill(childPid[i], SIGUSR2);
+        kill(childPid[i], SIGUSR1);
     }
     sleep(30);
     for(int i=0; i<NUM; ++i) {
