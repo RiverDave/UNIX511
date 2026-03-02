@@ -53,7 +53,9 @@ void dr_signal_handler(int sig, siginfo_t *info, void *context) {
     char msg[256];
 
     if (sig == SIGUSR1) {
-        write(STDOUT_FILENO, "Warning: Worker exceeded memory limit!\n", 39);
+        char out[64];
+        int len = snprintf(out, sizeof(out), "Worker PID %d exceeded memory limit\n", (int)info->si_pid);
+        write(STDOUT_FILENO, out, len);
         snprintf(msg, sizeof(msg), "[WARNING] Worker PID %d exceeded memory limit (>50MB)\n", info->si_pid);
         dr_log_event(msg);
     } else if (sig == SIGUSR2) {
