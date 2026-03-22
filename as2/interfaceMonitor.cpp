@@ -13,7 +13,11 @@
 #include <iostream>
 #include <string>
 
+#if defined(__linux__)
 #include <linux/if.h>
+#else
+#include <net/if.h>
+#endif
 
 #include "common.h"
 
@@ -99,6 +103,7 @@ bool RecvMessage(int fd, std::string& message) {
 }
 
 bool SetInterfaceUp(const std::string& interfaceName) {
+#if defined(__linux__) || defined(__APPLE__)
   const int controlSock = socket(AF_INET, SOCK_DGRAM, 0);
   if (controlSock < 0) {
     return false;
@@ -117,6 +122,10 @@ bool SetInterfaceUp(const std::string& interfaceName) {
   const bool ok = (ioctl(controlSock, SIOCSIFFLAGS, &ifr) == 0);
   close(controlSock);
   return ok;
+#else
+  (void)interfaceName;
+  return false;
+#endif
 }
 
 struct InterfaceStats {
@@ -267,6 +276,18 @@ int main(int argc, char* argv[]) {
         monitoringEnabled = true;
         if (!SendMessage(serverFd, netmon::kMonitoring)) {
           std::cerr << "ERROR: Failed to send Monitoring message" << std::endl;
+          break;
+        }
+      } else if (command == netmon::kShow) {
+        InterfaceStats stats;
+        if (!ReadInterfaceStats(interfaceName, stats)) {
+          std::cerr << "ERROR: Could not read interface stats for " << interfaceName << std::endl;
+        } else {
+          PrintStats(interfaceName, stats);
+        }
+
+        if (!SendMessage(serverFd, netmon::kShown)) {
+          std::cerr << "ERROR: Failed to send Shown message" << std::endl;
           break;
         }
       } else if (command == netmon::kSetLinkUp) {

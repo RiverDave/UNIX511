@@ -1,4 +1,5 @@
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <sys/wait.h>
@@ -10,6 +11,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -100,6 +102,103 @@ void CleanupWorkers(std::vector<WorkerInfo>& workers) {
   }
 }
 
+void HandleWorkerMessage(WorkerInfo& worker, const std::string& message, bool* shownAck) {
+  if (message == netmon::kLinkDown) {
+    if (!SendMessage(worker.fd, netmon::kSetLinkUp)) {
+      close(worker.fd);
+      worker.fd = -1;
+    }
+    return;
+  }
+
+  if (message == netmon::kShown) {
+    if (shownAck != nullptr) {
+      *shownAck = true;
+    }
+    return;
+  }
+
+  if (message == netmon::kDone) {
+    close(worker.fd);
+    worker.fd = -1;
+  }
+}
+
+void RunShowCommand(std::vector<WorkerInfo>& workers) {
+  std::vector<bool> waiting(workers.size(), false);
+  int pending = 0;
+
+  for (size_t i = 0; i < workers.size(); ++i) {
+    if (workers[i].fd < 0) {
+      continue;
+    }
+    if (SendMessage(workers[i].fd, netmon::kShow)) {
+      waiting[i] = true;
+      ++pending;
+    } else {
+      close(workers[i].fd);
+      workers[i].fd = -1;
+    }
+  }
+
+  while (pending > 0 && g_running) {
+    fd_set readSet;
+    FD_ZERO(&readSet);
+
+    int maxFd = -1;
+    for (size_t i = 0; i < workers.size(); ++i) {
+      if (waiting[i] && workers[i].fd >= 0) {
+        FD_SET(workers[i].fd, &readSet);
+        if (workers[i].fd > maxFd) {
+          maxFd = workers[i].fd;
+        }
+      }
+    }
+
+    if (maxFd < 0) {
+      break;
+    }
+
+    struct timeval timeout;
+    timeout.tv_sec = 2;
+    timeout.tv_usec = 0;
+
+    const int ready = select(maxFd + 1, &readSet, nullptr, nullptr, &timeout);
+    if (ready < 0) {
+      if (errno == EINTR) {
+        continue;
+      }
+      break;
+    }
+
+    if (ready == 0) {
+      break;
+    }
+
+    for (size_t i = 0; i < workers.size(); ++i) {
+      if (!waiting[i] || workers[i].fd < 0 || !FD_ISSET(workers[i].fd, &readSet)) {
+        continue;
+      }
+
+      std::string message;
+      if (!RecvMessage(workers[i].fd, message)) {
+        close(workers[i].fd);
+        workers[i].fd = -1;
+        waiting[i] = false;
+        --pending;
+        continue;
+      }
+
+      bool shownAck = false;
+      HandleWorkerMessage(workers[i], message, &shownAck);
+      if (shownAck || workers[i].fd < 0) {
+        waiting[i] = false;
+        --pending;
+      }
+    }
+  }
+}
+
 }  // namespace
 
 int main() {
@@ -122,6 +221,8 @@ int main() {
       return 1;
     }
   }
+
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
   const std::string socketPath = BuildSocketPath();
   unlink(socketPath.c_str());
@@ -170,6 +271,47 @@ int main() {
 
   int connected = 0;
   while (connected < interfaceCount && g_running) {
+    fd_set readSet;
+    FD_ZERO(&readSet);
+    FD_SET(serverFd, &readSet);
+    FD_SET(STDIN_FILENO, &readSet);
+    int maxFd = (serverFd > STDIN_FILENO) ? serverFd : STDIN_FILENO;
+
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+
+    const int ready = select(maxFd + 1, &readSet, nullptr, nullptr, &timeout);
+    if (ready < 0) {
+      if (errno == EINTR) {
+        continue;
+      }
+      std::cerr << "ERROR: select() failed during handshake" << std::endl;
+      break;
+    }
+
+    if (ready == 0) {
+      continue;
+    }
+
+    if (FD_ISSET(STDIN_FILENO, &readSet)) {
+      std::string command;
+      if (!std::getline(std::cin, command)) {
+        g_running = 0;
+        break;
+      }
+      command = Trim(command);
+      if (command == "quit") {
+        g_running = 0;
+        break;
+      }
+      std::cout << "Waiting for workers to connect. Type 'quit' to stop." << std::endl;
+    }
+
+    if (!FD_ISSET(serverFd, &readSet)) {
+      continue;
+    }
+
     const int clientFd = accept(serverFd, nullptr, nullptr);
     if (clientFd < 0) {
       if (errno == EINTR) {
@@ -208,7 +350,67 @@ int main() {
   }
 
   while (g_running) {
-    sleep(1);
+    fd_set readSet;
+    FD_ZERO(&readSet);
+    FD_SET(STDIN_FILENO, &readSet);
+
+    int maxFd = STDIN_FILENO;
+    for (const WorkerInfo& worker : workers) {
+      if (worker.fd >= 0) {
+        FD_SET(worker.fd, &readSet);
+        if (worker.fd > maxFd) {
+          maxFd = worker.fd;
+        }
+      }
+    }
+
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+
+    const int ready = select(maxFd + 1, &readSet, nullptr, nullptr, &timeout);
+    if (ready < 0) {
+      if (errno == EINTR) {
+        continue;
+      }
+      std::cerr << "ERROR: select() failed" << std::endl;
+      break;
+    }
+
+    if (ready == 0) {
+      continue;
+    }
+
+    if (FD_ISSET(STDIN_FILENO, &readSet)) {
+      std::string command;
+      if (!std::getline(std::cin, command)) {
+        g_running = 0;
+      } else {
+        command = Trim(command);
+        if (command == "show") {
+          RunShowCommand(workers);
+        } else if (command == "quit") {
+          g_running = 0;
+        } else if (!command.empty()) {
+          std::cout << "Unknown command. Use 'show' or 'quit'." << std::endl;
+        }
+      }
+    }
+
+    for (WorkerInfo& worker : workers) {
+      if (worker.fd < 0 || !FD_ISSET(worker.fd, &readSet)) {
+        continue;
+      }
+
+      std::string message;
+      if (!RecvMessage(worker.fd, message)) {
+        close(worker.fd);
+        worker.fd = -1;
+        continue;
+      }
+
+      HandleWorkerMessage(worker, message, nullptr);
+    }
   }
 
   CleanupWorkers(workers);
