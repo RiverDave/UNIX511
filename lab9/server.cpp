@@ -1,3 +1,15 @@
+/******************************************************************************
+* UNX511-Lab9
+* I declare that this lab is my own work in accordance with Seneca Academic Policy.
+* No part of this assignment has been copied manually or electronically from any other source
+* (including web sites) or distributed to other students.
+*
+* Name: David Rivera Student ID: 137648226 Date: 01/04/2025
+*
+*
+*****************************************************************************/
+
+
 #include <arpa/inet.h>
 #include <array>
 #include <asm-generic/socket.h>
