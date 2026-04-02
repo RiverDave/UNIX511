@@ -12,6 +12,7 @@
 // server.cpp - Message queue server that dispatches messages between clients
 //
 #include "client.h"
+#include <sys/socket.h>
 #include <errno.h>
 #include <iostream>
 #include <queue>
