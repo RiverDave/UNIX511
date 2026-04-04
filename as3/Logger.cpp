@@ -53,7 +53,7 @@ void *recv_func(void *arg) {
 
     int lev = -1;
     sscanf(recv_buf, "Set Log Level=%d", &lev);
-    std::cout << "Changing severity to " << lev << "\n";
+    std::cout << "[LOGGER] Changing severity to " << lev << "\n";
 
     pthread_mutex_lock(&mutex);
     loglevel = static_cast<LOG_SEVERITY>(lev);
