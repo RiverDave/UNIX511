@@ -1,36 +1,36 @@
 /******************************************************************************
-* UNX511-Assignment 3
-* I declare that this assignment is my own work in accordance with Seneca Academic Policy.
-* No part of this assignment has been copied manually or electronically from any other source
-* (including web sites) or distributed to other students.
-*
-* Name: David Rivera - Student ID: 137648226 Date: 04/04/2025
-*
-*
-*****************************************************************************/
+ * UNX511-Assignment 3
+ * I declare that this assignment is my own work in accordance with Seneca
+ * Academic Policy. No part of this assignment has been copied manually or
+ * electronically from any other source (including web sites) or distributed to
+ * other students.
+ *
+ * Name: David Rivera - Student ID: 137648226 Date: 04/04/2025
+ *
+ *
+ *****************************************************************************/
 
 #include "Logger.h"
+#include <arpa/inet.h>
+#include <assert.h>
 #include <cerrno>
 #include <cstddef>
 #include <cstring>
+#include <fcntl.h>
 #include <iostream>
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <optional>
 #include <pthread.h>
 #include <stdio.h>
-#include <assert.h>
-#include <sys/socket.h>
 #include <string.h>
-#include <fcntl.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 namespace UNXLogger {
 
-
+/* listens for level-change commands sent back from the server */
 void *recv_func(void *arg) {
-  int fd = *reinterpret_cast<int *>(arg);
 #define RECV_BUFF_LEN 512
   char recv_buf[RECV_BUFF_LEN];
   while (is_running) {
@@ -67,6 +67,7 @@ void *recv_func(void *arg) {
   pthread_exit(NULL);
 }
 
+/* sets up UDP socket, binds to LOGGER_PORT, and spins up the recv thread */
 void InitializeLog() {
 
   // Handle socket initialization
@@ -102,20 +103,19 @@ void InitializeLog() {
 
   // initialize receive thread
   is_running = 1;
-  int ret = pthread_create(&rectid, nullptr, recv_func, &sockfd);
-  if(ret != 0){
+  int ret = pthread_create(&rectid, nullptr, recv_func, nullptr);
+  if (ret != 0) {
     perror("Unable to initialize receiver thread");
     return;
   }
 
-
   std::cout << "[SUCCESS] Log was initialized\n";
 }
 
-void SetLogLevel(LOG_SEVERITY newlevel){
-    loglevel = newlevel;
-}
+/* sets the minimum severity threshold; messages below this are dropped */
+void SetLogLevel(LOG_SEVERITY newlevel) { loglevel = newlevel; }
 
+/* formats a timestamped log entry and sends it to the server over UDP */
 void Log(LOG_SEVERITY severity, const char *filename, const char *funcname,
          int line, const char *msg) {
   // if severity level is beyond the filtered threshold, early return. It's
@@ -142,12 +142,12 @@ void Log(LOG_SEVERITY severity, const char *filename, const char *funcname,
   pthread_mutex_unlock(&mutex);
 }
 
-void ExitLog(){
-    std::cout << "[LOG] Quitting Log... farewell...\n";
-    is_running = 0;
-    pthread_join(rectid, NULL);
-    close(sockfd);
+/* signals the recv thread to stop, joins it, and closes the socket */
+void ExitLog() {
+  std::cout << "[LOG] Quitting Log... farewell...\n";
+  is_running = 0;
+  pthread_join(rectid, NULL);
+  close(sockfd);
 }
 
-
-}
+} // namespace UNXLogger

@@ -14,8 +14,6 @@
 #include <arpa/inet.h>
 #include <assert.h>
 #include <cerrno>
-#include <filesystem>
-#include <fstream>
 #include <cinttypes>
 #include <csignal>
 #include <cstddef>
@@ -24,6 +22,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <fcntl.h>
+#include <filesystem>
+#include <fstream>
 #include <inttypes.h>
 #include <iostream>
 #include <netinet/in.h>
@@ -48,6 +48,8 @@ FILE *logfile;
 static void shut_down_handler(int sig);
 void *recv_func(void *arg);
 
+/* TUI loop — lets you change log level or dump the log file; relays commands to
+ * Logger clients */
 int main(void) {
 
   // ========== Intercept ctrl-C - sig handler boilerplate =============
@@ -112,7 +114,7 @@ int main(void) {
       break;
     std::cout << std::endl;
 
-    int opt = strtoumax(in_buf, NULL, 10);
+    int opt = atoi(in_buf);
 
     switch (opt) {
 
@@ -122,44 +124,44 @@ int main(void) {
       std::cout << "Set the log level: ";
       if (fgets(levelbuf, 10, stdin) == NULL)
         break;
-      int level = strtoumax(levelbuf, NULL, 10);
+      int level = atoi(levelbuf);
 
       // send the buffer
       char buf[128];
       memset(buf, 0, 128);
       ssize_t len = sprintf(buf, "Set Log Level=%d", level) + 1;
       ssize_t sent = sendto(sockfd, buf, len, 0, (struct sockaddr *)&loggeraddr,
-             sizeof(loggeraddr));
+                            sizeof(loggeraddr));
       std::cout << "[SERVER] Sent " << sent << " Bytes" << "\n";
       std::cout << buf << "\n";
     } break;
 
     case 2: {
 
-        pthread_mutex_lock(&mutex);
+      pthread_mutex_lock(&mutex);
 
-        // Given the lab lack of specifics reading the file to buffer,
-        // I'm using a mix of C/C++ throghout this and more - not the prettiest
-        // code I've written...
+      // Given the lab lack of specifics reading the file to buffer,
+      // I'm using a mix of C/C++ throghout this and more - not the prettiest
+      // code I've written...
 
-        std::ifstream fin(LOG_FILE_NAME);
-        std::string contents((std::istreambuf_iterator<char>(fin)),
-                            std::istreambuf_iterator<char>());
-        std::cout << contents << "\n";
-        pthread_mutex_unlock(&mutex);
+      std::ifstream fin(LOG_FILE_NAME);
+      std::string contents((std::istreambuf_iterator<char>(fin)),
+                           std::istreambuf_iterator<char>());
+      std::cout << contents << "\n";
+      pthread_mutex_unlock(&mutex);
 
-        std::cout << "Press any key to continue: ";
-        fflush(stdout);
-        int c;
-        while((c = getchar()) != '\n' && c != EOF);  // flush leftover input
-        getchar();  // now actually wait
+      std::cout << "Press any key to continue: ";
+      fflush(stdout);
+      int c;
+      while ((c = getchar()) != '\n' && c != EOF)
+        ;        // flush leftover input
+      getchar(); // now actually wait
     } break;
 
     case 0: {
       // Its almost 6 am in the morning, pardon this shorcut lmao
       goto endloop;
-
-    } break;
+    }
     }
   }
 
@@ -176,13 +178,14 @@ endloop:
   return EXIT_SUCCESS;
 }
 
+/* receives log entries from Logger clients and appends them to disk */
 void *recv_func(void *arg) {
   int fd = *reinterpret_cast<int *>(arg);
   int logfd = open(LOG_FILE_NAME, O_WRONLY | O_CREAT | O_APPEND, 0666);
 #define RECV_BUFF_LEN 512
   char recv_buf[RECV_BUFF_LEN];
 
-  while(is_running){
+  while (is_running) {
     socklen_t addrlen = sizeof(servaddr);
     ssize_t received =
         recvfrom(fd, recv_buf, RECV_BUFF_LEN, 0,
@@ -210,6 +213,7 @@ void *recv_func(void *arg) {
   pthread_exit(NULL);
 }
 
+/* catches SIGINT to end the main loop gracefully */
 static void shut_down_handler(int sig) {
   switch (sig) {
 
