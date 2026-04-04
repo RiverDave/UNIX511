@@ -12,19 +12,14 @@
 
 #include "Logger.h"
 #include <arpa/inet.h>
-#include <assert.h>
 #include <cerrno>
-#include <cstddef>
 #include <cstring>
 #include <fcntl.h>
-#include <iostream>
 #include <netinet/in.h>
-#include <optional>
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 namespace UNXLogger {
@@ -38,32 +33,31 @@ void *recv_func(void *arg) {
     socklen_t addrlen = sizeof(loggeraddr);
     ssize_t received =
         recvfrom(sockfd, recv_buf, RECV_BUFF_LEN, 0,
-                 reinterpret_cast<struct sockaddr *>(&loggeraddr), &addrlen);
+                 (struct sockaddr *)&loggeraddr, &addrlen);
     if (received < 0) {
       if (errno == EAGAIN) {
         sleep(1);
         continue;
       }
 
-      std::cout << "[RECEIVE] Got:" << strerror(errno) << "\n";
-      std::cout
-          << "[RECEIVE] log unsuccessful on recv logging will keep on goin'\n";
+      printf("[RECEIVE] Got: %s\n", strerror(errno));
+      printf("[RECEIVE] log unsuccessful on recv logging will keep on goin'\n");
       continue;
     }
 
     int lev = -1;
     sscanf(recv_buf, "Set Log Level=%d", &lev);
-    std::cout << "[LOGGER] Changing severity to " << lev << "\n";
+    printf("[LOGGER] Changing severity to %d\n", lev);
 
     pthread_mutex_lock(&mutex);
-    loglevel = static_cast<LOG_SEVERITY>(lev);
+    loglevel = (LOG_SEVERITY)lev;
     pthread_mutex_unlock(&mutex);
 
     // (Not entirely sure if this is necessary)
     memset(recv_buf, 0, RECV_BUFF_LEN);
   }
 
-  std::cout << "[RECEIVE] Ending receiver\n";
+  printf("[RECEIVE] Ending receiver\n");
   pthread_exit(NULL);
 }
 
@@ -78,23 +72,19 @@ void InitializeLog() {
   }
 
   // == handle server conn
-
   memset(&servaddr, 0, sizeof(servaddr));
-
   servaddr.sin_family = AF_INET;
   servaddr.sin_port = htons(SERVER_PORT);
   servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
   // == handle logger conn
   memset(&loggeraddr, 0, sizeof(loggeraddr));
-
   loggeraddr.sin_family = AF_INET;
   loggeraddr.sin_port = htons(LOGGER_PORT);
   loggeraddr.sin_addr.s_addr = INADDR_ANY;
 
-  if (bind(sockfd, reinterpret_cast<struct sockaddr *>(&loggeraddr),
-           sizeof(loggeraddr)) < 0) {
-    std::cerr << "ERROR: bind() failed for " << LOGGER_PORT << "\n";
+  if (bind(sockfd, (struct sockaddr *)&loggeraddr, sizeof(loggeraddr)) < 0) {
+    fprintf(stderr, "ERROR: bind() failed for %d\n", LOGGER_PORT);
     close(sockfd);
     return;
   }
@@ -109,7 +99,7 @@ void InitializeLog() {
     return;
   }
 
-  std::cout << "[SUCCESS] Log was initialized\n";
+  printf("[SUCCESS] Log was initialized\n");
 }
 
 /* sets the minimum severity threshold; messages below this are dropped */
@@ -131,20 +121,15 @@ void Log(LOG_SEVERITY severity, const char *filename, const char *funcname,
 
   // other threads within this process may mutate our communication buffer at
   // the same time thus, we need to guard it with mutexes
-  memset(buf, 0, LOG_BUFF_LEN);
   ssize_t len = sprintf(buf, "%s %s %s:%s:%d %s\n", dt, levelstr[severity],
-                        filename, funcname, line, msg) +
-                1;
-  buf[len - 1] = '\0';
-  ssize_t sent =
-      sendto(sockfd, buf, len, 0,
-             reinterpret_cast<struct sockaddr *>(&servaddr), sizeof(servaddr));
+                        filename, funcname, line, msg) + 1; // +1 to include null terminator in send
+  sendto(sockfd, buf, len, 0, (struct sockaddr *)&servaddr, sizeof(servaddr));
   pthread_mutex_unlock(&mutex);
 }
 
 /* signals the recv thread to stop, joins it, and closes the socket */
 void ExitLog() {
-  std::cout << "[LOG] Quitting Log... farewell...\n";
+  printf("[LOG] Quitting Log... farewell...\n");
   is_running = 0;
   pthread_join(rectid, NULL);
   close(sockfd);
