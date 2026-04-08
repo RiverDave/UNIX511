@@ -53,7 +53,6 @@ void *recv_func(void *arg) {
     loglevel = (LOG_SEVERITY)lev;
     pthread_mutex_unlock(&mutex);
 
-    // (Not entirely sure if this is necessary)
     memset(recv_buf, 0, RECV_BUFF_LEN);
   }
 

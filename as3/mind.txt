@@ -1,0 +1,103 @@
+
+Its 9 pm on a friday night. Let's make this count:
+
+
+* The internal state of the logger needs to be stored within its own TU - that's according to the API elaborated in the lab description.
+* Need to research on how the UDP API generally works - apparently there is no binding process, on the server side you just open the socket - proceeding that you'd have the clients
+hooking to it based on port/address - peace of cake.
+* Now the receivers should be layed down similar to what we did on lab9. (PERHAPS NEED TO CLARIFY HERE)
+    * Do the receivers operate from the client side?
+
+AN important factor of this logger is that most be non-blocking at all cost (hence lossy - in a way), we can discard
+whatever timeouts when errno = `EAGAIN`.
+
+
+Some perhaps non accurate notes:
+
+Logger lives in a process and neets to consider that the it may me multi-threaded.
+
+Logger:
+
+* Generates a timestamp, writes in a format speficied in the specs.
+* filters on severity.
+* acquires a mutex.
+* get a buffer with the data formatted and sends to server address.
+* zeroes the buffer.
+* releases mutex.
+
+
+Here's a better synthesis of my understanding of the fundamental API to implement within the logger:
+
+InitializeLog():
+
+- Hook up to the server (set up socket), generate a FD which is your connection with the server. (Although well this is udp right? So if we ever need to exchange bytes
+we can sendto rather.) -> More likely set server Address internally.
+- Set up receiver threads, initialize pthread. listen for changes in the severity level, this is explained below:
+
+
+SetLogLevel():
+- This basically mutates the Logger's TU internal state.
+- this is simply a setter bound on startup.
+- 
+
+Log():
+- Check if severity passed is within the filtered treshold - else early return. this need to be guarded by mutexes.
+- Generate timestamp.
+- 
+- lock mutex.
+- set up our intermidiate buffer which is our layer of communication.
+    Zero it
+- Format buffer
+- send buf to server
+- release mutex.
+
+
+ExitLog():
+- instructs receiver to stop.
+- close the shenanigans on the socket we opened.
+- join ptrheads with the main process.
+
+
+ReceiveThread:
+- Loops while is running and checks fd for changes in the severity filter. gets that from recvfrom and parses
+the filter level. if nothing is returned sleep for 1 second.
+- mutates global filter log condition
+    - To avoid race conditions given the logger early returns based on that state - we'll lock any write we do to the filter level which is later released.
+- we should have in theory some sort of flag that stops its execution.
+
+
+
+====== SERVER
+
+Similar to our lab9 
+
+* need a signal handler
+* We have a receiver that transports whatever is brought by the logger. we then write that to a file.
+* the difference: We have a main loop that displays the user with a menu, the user is prompted to set the log level.
+* Again we need two sockaddr - one to receive (which we bind). another to send to, the port one.
+
+The interface:
+
+* the user can also read directly the log dump. given the receiver and main may access the shared file
+guarding is needed with mutexes:
+
+    1. Set log level -> fgets may slow down syscalls hence if fgets == nullptr quit
+    2. dump log level here => Display log file
+    0. Shutdown => break main loop and shutdown receive
+
+
+
+======= Some leftovers
+
+- Ask claude or other llm to docstring my code if necessary
+- Resolve questions on spec
+- Record video
+- cleanup code if possible
+
+
+
+
+
+
+
+
